@@ -17,5 +17,9 @@
   <ItemGroup>
     <None Include="carAlramBrute.ino" />
   </ItemGroup>
- 
+  <ItemGroup>
+    <ClInclude Include="__vm\.carAlramBrute.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

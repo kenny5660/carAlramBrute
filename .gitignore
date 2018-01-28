@@ -259,3 +259,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/carAlramBrute/__vm/Upload.vmps.xml
+/carAlramBrute/__vm/Configuration.Debug.vmps.xml
+/carAlramBrute/__vm/Compile.vmps.xml
+/carAlramBrute/__vm/.carAlramBrute.vsarduino.h
